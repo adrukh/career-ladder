@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
+import { Slider } from "@/components/ui/slider"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Separator } from "@/components/ui/separator"
 import {
@@ -27,6 +28,8 @@ import {
 import { RadarChart } from "../components/RadarChart"
 import { RoleComparison } from "../components/RoleComparison"
 import { CustomRoleBuilder } from "../components/CustomRoleBuilder"
+import { RoleCard } from "@/components/RoleCard"
+import { TrackHeader } from "@/components/TrackHeader"
 
 // Career dimensions and their descriptions
 const DIMENSIONS = [
@@ -38,15 +41,15 @@ const DIMENSIONS = [
     levels: [
       { label: "learns", description: "Learns quickly from others and consistently steps up when required" },
       { label: "supports", description: "Supports other team members proactively and helps them to be successful" },
-      { label: "mentors", description: "Mentors others to accelerate their growth and encourages them to participate" },
+      { label: "contributes", description: "Mentors others to accelerate their growth and encourages them to participate" },
       {
-        label: "manages",
+        label: "leads",
         description: "Manages team members' career, expectations, performance and belonging through empowerment",
       },
     ],
   },
   {
-    id: "scope",
+    id: "work_scope",
     name: "Work Scope",
     icon: Target,
     color: "green",
@@ -78,8 +81,8 @@ const DIMENSIONS = [
         label: "team",
         description: "Directly impacts the team's success, owns and coordinates work with others in the team",
       },
-      { label: "organization", description: "Acts, owns and effects outcomes across teams within product engineering" },
-      { label: "company", description: "Has impact across the company; owns and effects outcomes across functions" },
+      { label: "cross-team", description: "Acts, owns and effects outcomes across teams within product engineering" },
+      { label: "organization", description: "Has impact across the entire engineering org; owns and effects outcomes across functions" },
     ],
   },
   {
@@ -93,8 +96,8 @@ const DIMENSIONS = [
         description: "Follows the team processes, delivering a consistent flow of value to production",
       },
       {
-        label: "enforces",
-        description: "Enforces the team processes, making sure everybody understands the benefits/tradeoffs",
+        label: "implements",
+        description: "Implements the team processes, making sure everybody understands the benefits/tradeoffs",
       },
       {
         label: "adjusts",
@@ -133,44 +136,24 @@ const DIMENSIONS = [
 // Predefined roles
 const ROLES = [
   {
-    id: "junior-engineer",
-    name: "Junior Software Engineer",
-    track: "Individual Contributor",
-    levels: { people: 1, scope: 1, org_scope: 1, process: 1, technology: 1 },
-    salary: "$70k - $90k",
-    experience: "0-2 years",
-    responsibilities: [
-      "Write clean, maintainable code",
-      "Participate in code reviews",
-      "Fix bugs and implement small features",
-      "Learn team processes and tools",
-    ],
-    skills: ["Programming fundamentals", "Version control", "Testing basics", "Communication"],
-    nextRoles: ["software-engineer"],
-  },
-  {
     id: "software-engineer",
     name: "Software Engineer",
     track: "Individual Contributor",
-    levels: { people: 2, scope: 2, org_scope: 2, process: 2, technology: 2 },
-    salary: "$90k - $120k",
-    experience: "2-4 years",
+    levels: { people: 1, work_scope: 1, org_scope: 1, process: 1, technology: 1 },
     responsibilities: [
-      "Design and implement features independently",
-      "Mentor junior developers",
+      "Implement features independently",
+      "Understand design considerations",
       "Participate in architectural discussions",
       "Lead small projects",
     ],
     skills: ["System design basics", "Code review", "Mentoring", "Project planning"],
-    nextRoles: ["senior-engineer", "tech-lead"],
+    nextRoles: ["senior-engineer"],
   },
   {
     id: "senior-engineer",
     name: "Senior Software Engineer",
     track: "Individual Contributor",
-    levels: { people: 2, scope: 3, org_scope: 2, process: 2, technology: 3 },
-    salary: "$120k - $160k",
-    experience: "4-7 years",
+    levels: { people: 2, work_scope: 2, org_scope: 1, process: 1, technology: 2 },
     responsibilities: [
       "Lead technical design and architecture",
       "Mentor team members",
@@ -178,15 +161,13 @@ const ROLES = [
       "Collaborate across teams",
     ],
     skills: ["Advanced system design", "Leadership", "Cross-team collaboration", "Technical strategy"],
-    nextRoles: ["staff-engineer", "tech-lead", "engineering-manager"],
+    nextRoles: ["staff-engineer", "engineering-manager"],
   },
   {
     id: "staff-engineer",
     name: "Staff Engineer",
     track: "Individual Contributor",
-    levels: { people: 3, scope: 3, org_scope: 3, process: 3, technology: 4 },
-    salary: "$160k - $220k",
-    experience: "7+ years",
+    levels: { people: 2, work_scope: 2, org_scope: 2, process: 2, technology: 3 },
     responsibilities: [
       "Define technical strategy",
       "Lead cross-team initiatives",
@@ -197,28 +178,10 @@ const ROLES = [
     nextRoles: ["principal-engineer", "engineering-manager"],
   },
   {
-    id: "tech-lead",
-    name: "Tech Lead",
-    track: "Technical Leadership",
-    levels: { people: 3, scope: 3, org_scope: 2, process: 3, technology: 3 },
-    salary: "$130k - $170k",
-    experience: "4-6 years",
-    responsibilities: [
-      "Guide team technical decisions",
-      "Coordinate with product and design",
-      "Ensure code quality and delivery",
-      "Develop team members",
-    ],
-    skills: ["Technical leadership", "Project management", "Stakeholder communication", "Team coordination"],
-    nextRoles: ["senior-engineer", "engineering-manager", "staff-engineer"],
-  },
-  {
     id: "engineering-manager",
     name: "Engineering Manager",
     track: "Management",
-    levels: { people: 4, scope: 3, org_scope: 3, process: 3, technology: 2 },
-    salary: "$140k - $180k",
-    experience: "5-8 years",
+    levels: { people: 3, work_scope: 2, org_scope: 3, process: 2, technology: 1 },
     responsibilities: [
       "Manage and develop team members",
       "Set team goals and priorities",
@@ -226,7 +189,35 @@ const ROLES = [
       "Drive team performance",
     ],
     skills: ["People management", "Performance management", "Strategic planning", "Communication"],
-    nextRoles: ["senior-engineering-manager", "director-engineering"],
+    nextRoles: ["staff-engineer", "director-engineering"],
+  },
+  {
+    id: "principal-engineer",
+    name: "Principal Engineer",
+    track: "Individual Contributor",
+    levels: { people: 2, work_scope: 4, org_scope: 4, process: 3, technology: 4 },
+    responsibilities: [
+      "Company-wide technical impact",
+      "Technical vision",
+      "Industry leadership",
+      "Architect complex systems"
+    ],
+    skills: ["Advanced technical leadership", "Industry expertise", "Technical strategy", "System architecture"],
+    nextRoles: ["director-engineering"],
+  },
+  {
+    id: "director-engineering",
+    name: "Director of Engineering",
+    track: "Management",
+    levels: { people: 4, work_scope: 4, org_scope: 4, process: 4, technology: 2 },
+    responsibilities: [
+      "Org-wide leadership",
+      "Vision setting",
+      "Executive collaboration",
+      "Strategic planning"
+    ],
+    skills: ["Executive leadership", "Vision & strategy", "Business acumen", "Organizational design"],
+    nextRoles: ["principal-engineer"],
   },
 ]
 
@@ -237,16 +228,19 @@ const TRACK_COLORS = {
 }
 
 export default function CareerLadderApp() {
-  const [selectedRole, setSelectedRole] = useState(null)
+  const [selectedRole, setSelectedRole] = useState(ROLES.find((r) => r.id === "software-engineer") || null)
   const [customRole, setCustomRole] = useState({
-    name: "Custom Role",
-    levels: { people: 1, scope: 1, org_scope: 1, process: 1, technology: 1 },
+    name: "Selected Skills",
+    levels: { people: 1, work_scope: 1, org_scope: 1, process: 1, technology: 1 },
   })
-  const [showCustom, setShowCustom] = useState(true)
-  const [showNearest, setShowNearest] = useState(true)
-  const [compareMode, setCompareMode] = useState(false)
-  const [compareRoles, setCompareRoles] = useState([null, null])
-  const [activeTab, setActiveTab] = useState("explore")
+  const [compareRoles, setCompareRoles] = useState([
+    ROLES.find((r) => r.id === "staff-engineer") || ROLES[0], 
+    ROLES.find((r) => r.id === "engineering-manager") || ROLES[1]
+  ])
+  const [activeTab, setActiveTab] = useState("define")
+  const [showNearestRole, setShowNearestRole] = useState(false)
+  const [shareButtonText, setShareButtonText] = useState("Share")
+  const [resetButtonText, setResetButtonText] = useState("Reset")
 
   // Find nearest matching role based on custom levels
   const findNearestRole = (levels) => {
@@ -272,7 +266,23 @@ export default function CareerLadderApp() {
   // Prepare data for radar chart
   const chartLayers = []
 
-  if (showCustom) {
+  if (activeTab === "explore") {
+    // In explore mode, only show selected role
+    if (selectedRole) {
+      chartLayers.push({
+        id: "selected",
+        label: selectedRole.name,
+        data: DIMENSIONS.map((dim) => ({
+          dimension: dim.name,
+          value: selectedRole.levels[dim.id],
+          max: 4,
+        })),
+        color: "#3b82f6",
+        visible: true,
+      })
+    }
+  } else if (activeTab === "define") {
+    // In define mode, show role definition and optionally nearest role
     chartLayers.push({
       id: "custom",
       label: customRole.name,
@@ -281,71 +291,64 @@ export default function CareerLadderApp() {
         value: customRole.levels[dim.id],
         max: 4,
       })),
-      color: "hsl(var(--primary))",
+      color: "#3b82f6",
       visible: true,
     })
-  }
 
-  if (showNearest && nearestRole) {
-    chartLayers.push({
-      id: "nearest",
-      label: `Nearest: ${nearestRole.name}`,
-      data: DIMENSIONS.map((dim) => ({
-        dimension: dim.name,
-        value: nearestRole.levels[dim.id],
-        max: 4,
-      })),
-      color: "hsl(var(--muted-foreground))",
-      visible: true,
-    })
-  }
-
-  if (selectedRole) {
-    chartLayers.push({
-      id: "selected",
-      label: selectedRole.name,
-      data: DIMENSIONS.map((dim) => ({
-        dimension: dim.name,
-        value: selectedRole.levels[dim.id],
-        max: 4,
-      })),
-      color: "hsl(var(--destructive))",
-      visible: true,
-    })
+    if (nearestRole && showNearestRole) {
+      chartLayers.push({
+        id: "nearest",
+        label: `Nearest: ${nearestRole.name}`,
+        data: DIMENSIONS.map((dim) => ({
+          dimension: dim.name,
+          value: nearestRole.levels[dim.id],
+          max: 4,
+        })),
+        color: "#ef4444",
+        visible: true,
+      })
+    }
+  } else if (activeTab === "compare") {
+    // In compare mode, show the comparison roles (handled elsewhere)
   }
 
   const handleShare = async () => {
     const state = {
       customRole,
       selectedRole: selectedRole?.id,
-      showCustom,
-      showNearest,
-      compareMode,
+      activeTab,
       compareRoles: compareRoles.map((r) => r?.id),
+      showNearestRole,
     }
 
     const url = `${window.location.origin}${window.location.pathname}#${encodeURIComponent(JSON.stringify(state))}`
 
     try {
       await navigator.clipboard.writeText(url)
-      // Could add a toast notification here
+      setShareButtonText("Copied!")
+      setTimeout(() => setShareButtonText("Share"), 2000)
     } catch (err) {
       console.error("Failed to copy URL:", err)
+      setShareButtonText("Failed")
+      setTimeout(() => setShareButtonText("Share"), 2000)
     }
   }
 
   const handleReset = () => {
-    setSelectedRole(null)
+    setSelectedRole(ROLES.find((r) => r.id === "software-engineer") || null)
     setCustomRole({
-      name: "Custom Role",
-      levels: { people: 1, scope: 1, org_scope: 1, process: 1, technology: 1 },
+      name: "Selected Skills",
+      levels: { people: 1, work_scope: 1, org_scope: 1, process: 1, technology: 1 },
     })
-    setShowCustom(true)
-    setShowNearest(true)
-    setCompareMode(false)
-    setCompareRoles([null, null])
-    setActiveTab("explore")
+    setCompareRoles([
+      ROLES.find((r) => r.id === "staff-engineer") || ROLES[0], 
+      ROLES.find((r) => r.id === "engineering-manager") || ROLES[1]
+    ])
+    setActiveTab("define")
+    setShowNearestRole(false)
     window.location.hash = ""
+    setResetButtonText("Reset!")
+    setTimeout(() => setResetButtonText("Reset"), 1500)
   }
 
   // Load state from URL on mount
@@ -358,13 +361,12 @@ export default function CareerLadderApp() {
           const role = ROLES.find((r) => r.id === state.selectedRole)
           if (role) setSelectedRole(role)
         }
-        if (typeof state.showCustom === "boolean") setShowCustom(state.showCustom)
-        if (typeof state.showNearest === "boolean") setShowNearest(state.showNearest)
-        if (typeof state.compareMode === "boolean") setCompareMode(state.compareMode)
+        if (typeof state.activeTab === "string") setActiveTab(state.activeTab)
         if (state.compareRoles) {
           const roles = state.compareRoles.map((id) => ROLES.find((r) => r.id === id)).filter(Boolean)
           setCompareRoles(roles)
         }
+        if (typeof state.showNearestRole === "boolean") setShowNearestRole(state.showNearestRole)
       } catch (err) {
         console.error("Failed to parse URL state:", err)
       }
@@ -372,275 +374,450 @@ export default function CareerLadderApp() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+    <div className="min-h-screen bg-slate-50">
       <div className="container mx-auto p-6">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
+        <div className="mb-10">
+          <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-4xl font-bold text-gray-900 mb-2">Engineering Career Ladder</h1>
-              <p className="text-lg text-gray-600">Explore career progression paths and role expectations</p>
+              <h1 className="text-5xl font-bold text-gray-900 mb-3">
+                Engineering Career Ladder
+              </h1>
+              <p className="text-xl text-gray-600 max-w-2xl">
+                Explore career progression paths, define custom roles, and understand expectations for engineering positions
+              </p>
             </div>
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={handleShare} className="flex items-center gap-2 bg-transparent">
+            <div className="flex gap-3">
+              <Button variant="outline" onClick={handleShare} className="flex items-center gap-2 bg-white border-slate-200 hover:bg-slate-50 shadow-sm">
                 <Share2 className="h-4 w-4" />
-                Share
+                {shareButtonText}
               </Button>
-              <Button variant="outline" onClick={handleReset} className="flex items-center gap-2 bg-transparent">
+              <Button variant="outline" onClick={handleReset} className="flex items-center gap-2 bg-white border-slate-200 hover:bg-slate-50 shadow-sm">
                 <RotateCcw className="h-4 w-4" />
-                Reset
+                {resetButtonText}
               </Button>
             </div>
           </div>
 
-          <Alert>
-            <Info className="h-4 w-4" />
-            <AlertDescription>
-              This tool helps guide career discussions - nothing here constitutes a final decision!
-            </AlertDescription>
-          </Alert>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Sidebar Controls */}
-          <div className="lg:col-span-1">
-            <Card className="sticky top-6">
-              <CardHeader>
-                <CardTitle>Controls</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Tabs value={activeTab} onValueChange={setActiveTab}>
-                  <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="explore">Explore</TabsTrigger>
-                    <TabsTrigger value="compare">Compare</TabsTrigger>
-                  </TabsList>
+        {/* Tabs Control - Moved outside of left panel */}
+        <div className="mb-8">
+          <Card className="bg-white border-slate-200 shadow-lg">
+            <CardContent className="p-6">
+              <Tabs value={activeTab} onValueChange={setActiveTab}>
+                <TabsList className="grid w-full grid-cols-3 max-w-md mx-auto">
+                  <TabsTrigger value="define">Inspect</TabsTrigger>
+                  <TabsTrigger value="explore">Explore</TabsTrigger>
+                  <TabsTrigger value="compare">Compare</TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </CardContent>
+          </Card>
+        </div>
 
-                  <TabsContent value="explore" className="space-y-4">
-                    {/* Custom Role Builder */}
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <Label htmlFor="show-custom">Custom Role</Label>
-                        <Switch id="show-custom" checked={showCustom} onCheckedChange={setShowCustom} />
+        {activeTab === "compare" ? (
+          /* Compare Mode - Full Width Layout */
+          <div className="space-y-8">
+            {/* Comparison Results */}
+            {compareRoles[0] && compareRoles[1] ? (
+              <RoleComparison 
+                roles={compareRoles} 
+                dimensions={DIMENSIONS} 
+                trackColors={TRACK_COLORS}
+                onRoleChange={(index, roleId) => {
+                  const role = ROLES.find((r) => r.id === roleId)
+                  if (index === 0) {
+                    setCompareRoles([role || null, compareRoles[1]])
+                  } else {
+                    setCompareRoles([compareRoles[0], role || null])
+                  }
+                }}
+                allRoles={ROLES}
+              />
+            ) : (
+              <Card className="bg-white border-slate-200 shadow-lg">
+                <CardHeader>
+                  <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                    <div>
+                      <CardTitle className="text-xl font-semibold text-gray-900">Skill Level Comparison</CardTitle>
+                      <CardDescription className="text-base text-gray-600">
+                        Select two roles to compare their requirements and progression
+                      </CardDescription>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:min-w-[400px]">
+                      <div className="space-y-2">
+                        <Label>First Role</Label>
+                        <Select
+                          value={compareRoles[0]?.id || ""}
+                          onValueChange={(value) => {
+                            const role = ROLES.find((r) => r.id === value)
+                            setCompareRoles([role || null, compareRoles[1]])
+                          }}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Choose first role..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {ROLES.map((role) => (
+                              <SelectItem key={role.id} value={role.id}>
+                                {role.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
 
-                      {showCustom && (
-                        <CustomRoleBuilder role={customRole} onChange={setCustomRole} dimensions={DIMENSIONS} />
-                      )}
+                      <div className="space-y-2">
+                        <Label>Second Role</Label>
+                        <Select
+                          value={compareRoles[1]?.id || ""}
+                          onValueChange={(value) => {
+                            const role = ROLES.find((r) => r.id === value)
+                            setCompareRoles([compareRoles[0], role || null])
+                          }}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Choose second role..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {ROLES.map((role) => (
+                              <SelectItem key={role.id} value={role.id}>
+                                {role.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
-
-                    <Separator />
-
-                    {/* Show Nearest Toggle */}
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="show-nearest">Show Nearest Role</Label>
-                      <Switch id="show-nearest" checked={showNearest} onCheckedChange={setShowNearest} />
-                    </div>
-
-                    <Separator />
-
-                    {/* Role Selection */}
-                    <div className="space-y-3">
-                      <Label>Select Role to Highlight</Label>
-                      <Select
-                        value={selectedRole?.id || ""}
-                        onValueChange={(value) => {
-                          const role = ROLES.find((r) => r.id === value)
-                          setSelectedRole(role || null)
-                        }}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Choose a role..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {ROLES.map((role) => (
-                            <SelectItem key={role.id} value={role.id}>
-                              {role.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </TabsContent>
-
-                  <TabsContent value="compare" className="space-y-4">
-                    <div className="space-y-3">
-                      <Label>First Role</Label>
-                      <Select
-                        value={compareRoles[0]?.id || ""}
-                        onValueChange={(value) => {
-                          const role = ROLES.find((r) => r.id === value)
-                          setCompareRoles([role || null, compareRoles[1]])
-                        }}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Choose first role..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {ROLES.map((role) => (
-                            <SelectItem key={role.id} value={role.id}>
-                              {role.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-3">
-                      <Label>Second Role</Label>
-                      <Select
-                        value={compareRoles[1]?.id || ""}
-                        onValueChange={(value) => {
-                          const role = ROLES.find((r) => r.id === value)
-                          setCompareRoles([compareRoles[0], role || null])
-                        }}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Choose second role..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {ROLES.map((role) => (
-                            <SelectItem key={role.id} value={role.id}>
-                              {role.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </TabsContent>
-                </Tabs>
-              </CardContent>
-            </Card>
+                  </div>
+                </CardHeader>
+              </Card>
+            )}
           </div>
+        ) : (
+          /* Standard Two-Column Layout for Explore and Define */
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Sidebar Controls - Expanded */}
+            <div className={activeTab === "define" ? "lg:col-span-1" : "lg:col-span-2"}>
+              <Card className="sticky top-6 bg-white border-slate-200 shadow-lg">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-xl font-semibold text-gray-900">{activeTab === "define" ? "Skills" : "Roles"}</CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  {activeTab === "explore" && (
+                    <div className="space-y-6">
+                      {/* Career Progression Tree */}
+                      <div className="space-y-6">
+                        <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
+                          {/* Base Role Card */}
+                          <div className="flex justify-center mb-8">
+                            <RoleCard
+                              role={ROLES.find((r) => r.id === "software-engineer") || ROLES[1]}
+                              isSelected={selectedRole?.id === "software-engineer"}
+                              onClick={() => {
+                                const role = ROLES.find((r) => r.id === "software-engineer")
+                                setSelectedRole(role || null)
+                              }}
+                              allRoles={ROLES}
+                              className="w-80"
+                              showModal={false}
+                            />
+                          </div>
 
-          {/* Main Content */}
-          <div className="lg:col-span-3">
-            {activeTab === "compare" && compareRoles[0] && compareRoles[1] ? (
-              <RoleComparison roles={compareRoles} dimensions={DIMENSIONS} trackColors={TRACK_COLORS} />
-            ) : (
-              <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-                {/* Radar Chart */}
-                <div className="xl:col-span-2">
-                  <Card>
+                          {/* Connecting Line */}
+                          <div className="hidden sm:flex justify-center mb-8">
+                            <div className="w-0.5 h-8 bg-gradient-to-b from-slate-400 to-slate-300"></div>
+                          </div>
+                          <div className="sm:hidden mb-6"></div>
+
+                          {/* Senior Engineer Card */}
+                          <div className="flex justify-center mb-8">
+                            <RoleCard
+                              role={ROLES.find((r) => r.id === "senior-engineer") || ROLES[2]}
+                              isSelected={selectedRole?.id === "senior-engineer"}
+                              onClick={() => {
+                                const role = ROLES.find((r) => r.id === "senior-engineer")
+                                setSelectedRole(role || null)
+                              }}
+                              allRoles={ROLES}
+                              className="w-80"
+                              showModal={false}
+                            />
+                          </div>
+
+                          {/* Connecting Line */}
+                          <div className="hidden sm:flex justify-center mb-8">
+                            <div className="w-0.5 h-8 bg-gradient-to-b from-slate-400 to-slate-300"></div>
+                          </div>
+                          <div className="sm:hidden mb-6"></div>
+
+                          {/* Career Tracks */}
+                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            {/* Management Track */}
+                            <div className="space-y-4">
+                              <TrackHeader title="Management Track" trackType="management" />
+                              <div className="space-y-4">
+                                <RoleCard
+                                  role={ROLES.find((r) => r.id === "engineering-manager") || ROLES[5]}
+                                  isSelected={selectedRole?.id === "engineering-manager"}
+                                  onClick={() => {
+                                    const role = ROLES.find((r) => r.id === "engineering-manager")
+                                    setSelectedRole(role || null)
+                                  }}
+                                  allRoles={ROLES}
+                                  showModal={false}
+                                />
+                                
+                                <div className="flex justify-center py-2">
+                                  <div className="w-0.5 h-6 bg-gradient-to-b from-slate-300 to-slate-200"></div>
+                                </div>
+                                
+                                <RoleCard
+                                  role={ROLES.find((r) => r.id === "director-engineering") || {
+                                    id: "director-engineering",
+                                    name: "Director of Engineering",
+                                    track: "Management",
+                                    levels: { people: 4, work_scope: 3, org_scope: 3, process: 3, technology: 2 },
+                                    responsibilities: ["Org-wide leadership", "Vision setting", "Executive collaboration"],
+                                    skills: ["Executive leadership", "Vision & strategy", "Business acumen"]
+                                  }}
+                                  isSelected={selectedRole?.id === "director-engineering"}
+                                  onClick={() => {
+                                    const role = ROLES.find((r) => r.id === "director-engineering")
+                                    if (role) setSelectedRole(role)
+                                  }}
+                                  allRoles={ROLES}
+                                  showModal={false}
+                                />
+                              </div>
+                            </div>
+
+                            {/* Tech Leadership Track */}
+                            <div className="space-y-4">
+                              <TrackHeader title="Tech Leadership Track" trackType="technical" />
+                              <div className="space-y-4">
+                                <RoleCard
+                                  role={ROLES.find((r) => r.id === "staff-engineer") || ROLES[3]}
+                                  isSelected={selectedRole?.id === "staff-engineer"}
+                                  onClick={() => {
+                                    const role = ROLES.find((r) => r.id === "staff-engineer")
+                                    setSelectedRole(role || null)
+                                  }}
+                                  allRoles={ROLES}
+                                  showModal={false}
+                                />
+                                
+                                <div className="flex justify-center py-2">
+                                  <div className="w-0.5 h-6 bg-gradient-to-b from-slate-200 to-slate-100"></div>
+                                </div>
+                                
+                                <RoleCard
+                                  role={ROLES.find((r) => r.id === "principal-engineer") || {
+                                    id: "principal-engineer",
+                                    name: "Principal Engineer",
+                                    track: "Individual Contributor",
+                                    levels: { people: 3, work_scope: 3, org_scope: 3, process: 3, technology: 4 },
+                                    responsibilities: ["Company-wide technical impact", "Technical vision", "Industry leadership"],
+                                    skills: ["Advanced technical leadership", "Industry expertise", "Technical strategy"]
+                                  }}
+                                  isSelected={selectedRole?.id === "principal-engineer"}
+                                  onClick={() => {
+                                    const role = ROLES.find((r) => r.id === "principal-engineer")
+                                    if (role) setSelectedRole(role)
+                                  }}
+                                  allRoles={ROLES}
+                                  showModal={false}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {activeTab === "define" && (
+                    <div className="space-y-4">
+                      <div className="space-y-3">
+                        <CustomRoleBuilder role={customRole} onChange={setCustomRole} dimensions={DIMENSIONS} />
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Main Content - Radar Chart and Role Details */}
+            <div className={activeTab === "define" ? "lg:col-span-2" : "lg:col-span-1"}>
+              <div className="space-y-6">
+                <Card className="bg-white border-slate-200 shadow-lg h-fit">
+                  <CardHeader>
+                    <CardTitle className="text-2xl font-semibold text-gray-900">Career Progression Radar</CardTitle>
+                    <CardDescription className="text-base text-gray-600">
+                      Visualize skills and responsibilities across key dimensions
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="relative">
+                    <RadarChart
+                      layers={chartLayers}
+                      dimensions={DIMENSIONS}
+                      onLayerClick={(layer) => {
+                        if (layer.id === "nearest" && nearestRole) {
+                          setSelectedRole(nearestRole)
+                        }
+                      }}
+                    />
+                    
+                    
+                    {/* Role Labels */}
+                    {chartLayers.length > 0 && (
+                      <div className="flex justify-between items-start mt-4 pt-4 border-t border-gray-100">
+                        <div className="flex flex-col gap-2">
+                          {activeTab === "define" && (
+                            <>
+                              <div className="flex items-center gap-2">
+                                <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                                <span className="text-sm font-medium text-gray-700">{customRole.name}</span>
+                              </div>
+                              {nearestRole && showNearestRole && (
+                                <div className="flex items-center gap-2">
+                                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                                  <span className="text-sm font-medium text-gray-700">Nearest: {nearestRole.name}</span>
+                                </div>
+                              )}
+                            </>
+                          )}
+                          {activeTab === "explore" && selectedRole && (
+                            <div className="flex items-center gap-2">
+                              <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                              <span className="text-sm font-medium text-gray-700">{selectedRole.name}</span>
+                            </div>
+                          )}
+                        </div>
+                        
+                        {/* Toggle for nearest role in inspect view */}
+                        {activeTab === "define" && nearestRole && (
+                          <div className="flex items-center gap-2 bg-white rounded-lg px-3 py-2">
+                            <Label htmlFor="nearest-role-toggle" className="text-xs font-medium text-gray-700">
+                              Show nearest role
+                            </Label>
+                            <Switch
+                              id="nearest-role-toggle"
+                              checked={showNearestRole}
+                              onCheckedChange={setShowNearestRole}
+                              className="scale-75"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* Show selected role details in explore mode */}
+                {activeTab === "explore" && selectedRole && (
+                  <Card className="bg-white border-slate-200 shadow-lg">
                     <CardHeader>
-                      <CardTitle>Career Progression Radar</CardTitle>
-                      <CardDescription>Visualize skills and responsibilities across key dimensions</CardDescription>
+                      <CardTitle className="text-lg font-semibold text-gray-900">{selectedRole.name}</CardTitle>
+                      <CardDescription className="flex items-center gap-2">
+                        <Badge 
+                          variant="secondary" 
+                          className="bg-gray-100 text-gray-800 border-gray-200"
+                        >
+                          {selectedRole.track}
+                        </Badge>
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div>
+                        <h4 className="font-medium mb-2">
+                          Key Responsibilities
+                        </h4>
+                        <ul className="space-y-1 text-sm text-gray-600">
+                          {selectedRole.responsibilities.map((resp, index) => (
+                            <li key={index} className="flex items-start gap-2">
+                              <span className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-2 shrink-0" />
+                              {resp}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      <Separator />
+
+                      <div>
+                        <h4 className="font-medium mb-2">
+                          Core Skills
+                        </h4>
+                        <div className="flex flex-wrap gap-1">
+                          {selectedRole.skills.map((skill, index) => (
+                            <Badge key={index} variant="outline" className="text-xs">
+                              {skill}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+
+                      {selectedRole.nextRoles && selectedRole.nextRoles.length > 0 && (
+                        <>
+                          <Separator />
+                          <div>
+                            <h4 className="font-medium mb-2">
+                              Career Progression
+                            </h4>
+                            <div className="space-y-2">
+                              {selectedRole.nextRoles.map((nextRoleId, index) => {
+                                const nextRole = ROLES.find((r) => r.id === nextRoleId)
+                                if (!nextRole) return null
+
+                                return (
+                                  <div
+                                    key={index}
+                                    className="flex items-center gap-3 p-2 rounded hover:bg-gray-50 cursor-pointer"
+                                    onClick={() => setSelectedRole(nextRole)}
+                                  >
+                                    <div className="p-1.5 rounded bg-gray-100 text-gray-700">
+                                      <div className="w-3 h-3 bg-gray-400 rounded-full" />
+                                    </div>
+                                    <div className="text-left">
+                                      <div className="font-medium text-sm">{nextRole.name}</div>
+                                      <div className="text-xs text-gray-500">{nextRole.track}</div>
+                                    </div>
+                                  </div>
+                                )
+                              })}
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Show nearest role in define mode */}
+                {activeTab === "define" && nearestRole && showNearestRole && (
+                  <Card className="bg-white border-slate-200 shadow-lg">
+                    <CardHeader>
+                      <CardTitle className="text-lg font-semibold text-gray-900">Nearest Role Match</CardTitle>
+                      <CardDescription className="text-sm text-gray-600">
+                        Based on your current dimension levels
+                      </CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <RadarChart
-                        layers={chartLayers}
-                        dimensions={DIMENSIONS}
-                        onLayerClick={(layer) => {
-                          if (layer.id === "nearest" && nearestRole) {
-                            setSelectedRole(nearestRole)
-                          }
-                        }}
+                      <RoleCard
+                        role={nearestRole}
+                        isSelected={false}
+                        onClick={() => setSelectedRole(nearestRole)}
+                        allRoles={ROLES}
                       />
                     </CardContent>
                   </Card>
-                </div>
-
-                {/* Role Details */}
-                <div className="xl:col-span-1">
-                  {selectedRole ? (
-                    <Card>
-                      <CardHeader>
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <CardTitle className="text-xl">{selectedRole.name}</CardTitle>
-                            <CardDescription className="mt-1">
-                              {selectedRole.experience} • {selectedRole.salary}
-                            </CardDescription>
-                          </div>
-                          <Badge
-                            variant="secondary"
-                            className={`bg-${TRACK_COLORS[selectedRole.track]}-100 text-${TRACK_COLORS[selectedRole.track]}-800`}
-                          >
-                            {selectedRole.track}
-                          </Badge>
-                        </div>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        <div>
-                          <h4 className="font-medium mb-2 flex items-center gap-2">
-                            <CheckCircle className="h-4 w-4 text-green-600" />
-                            Key Responsibilities
-                          </h4>
-                          <ul className="space-y-1 text-sm text-gray-600">
-                            {selectedRole.responsibilities.map((resp, index) => (
-                              <li key={index} className="flex items-start gap-2">
-                                <span className="w-1 h-1 bg-gray-400 rounded-full mt-2 flex-shrink-0" />
-                                {resp}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-
-                        <Separator />
-
-                        <div>
-                          <h4 className="font-medium mb-2 flex items-center gap-2">
-                            <Zap className="h-4 w-4 text-blue-600" />
-                            Core Skills
-                          </h4>
-                          <div className="flex flex-wrap gap-1">
-                            {selectedRole.skills.map((skill, index) => (
-                              <Badge key={index} variant="outline" className="text-xs">
-                                {skill}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-
-                        {selectedRole.nextRoles && selectedRole.nextRoles.length > 0 && (
-                          <>
-                            <Separator />
-                            <div>
-                              <h4 className="font-medium mb-2 flex items-center gap-2">
-                                <ChevronRight className="h-4 w-4 text-purple-600" />
-                                Career Progression
-                              </h4>
-                              <div className="space-y-2">
-                                {selectedRole.nextRoles.map((nextRoleId, index) => {
-                                  const nextRole = ROLES.find((r) => r.id === nextRoleId)
-                                  if (!nextRole) return null
-
-                                  return (
-                                    <Button
-                                      key={index}
-                                      variant="ghost"
-                                      size="sm"
-                                      className="w-full justify-start h-auto p-2"
-                                      onClick={() => setSelectedRole(nextRole)}
-                                    >
-                                      <div className="text-left">
-                                        <div className="font-medium text-sm">{nextRole.name}</div>
-                                        <div className="text-xs text-muted-foreground">{nextRole.track}</div>
-                                      </div>
-                                    </Button>
-                                  )
-                                })}
-                              </div>
-                            </div>
-                          </>
-                        )}
-                      </CardContent>
-                    </Card>
-                  ) : (
-                    <Card className="h-96 flex items-center justify-center">
-                      <div className="text-center space-y-4">
-                        <Eye className="h-16 w-16 text-gray-400 mx-auto" />
-                        <div>
-                          <h3 className="text-lg font-medium text-gray-900">Select a Role</h3>
-                          <p className="text-gray-500">Choose a role to explore career details</p>
-                        </div>
-                      </div>
-                    </Card>
-                  )}
-                </div>
+                )}
               </div>
-            )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   )

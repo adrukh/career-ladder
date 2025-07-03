@@ -52,6 +52,15 @@ export function RadarChart({ layers, dimensions, onLayerClick }: RadarChartProps
     // Create scales
     const rScale = d3.scaleLinear().domain([0, 4]).range([0, radius])
 
+    // Color mapping for dimensions
+    const colorMap: Record<string, string> = {
+      blue: "#3b82f6",
+      green: "#10b981", 
+      purple: "#8b5cf6",
+      orange: "#f97316",
+      cyan: "#06b6d4"
+    }
+
     // Draw grid circles
     for (let i = 1; i <= 4; i++) {
       g.append("circle")
@@ -68,6 +77,7 @@ export function RadarChart({ layers, dimensions, onLayerClick }: RadarChartProps
       const angle = angleSlice * i - Math.PI / 2
       const x = Math.cos(angle) * radius
       const y = Math.sin(angle) * radius
+      const dimColor = colorMap[dim.color] || "#cbd5e1"
 
       // Axis line
       g.append("line")
@@ -75,8 +85,9 @@ export function RadarChart({ layers, dimensions, onLayerClick }: RadarChartProps
         .attr("y1", 0)
         .attr("x2", x)
         .attr("y2", y)
-        .style("stroke", "#cbd5e1")
-        .style("stroke-width", 1)
+        .style("stroke", dimColor)
+        .style("stroke-width", 2)
+        .style("opacity", 0.3)
 
       // Dimension labels
       const labelX = Math.cos(angle) * (radius + 20)
@@ -88,8 +99,8 @@ export function RadarChart({ layers, dimensions, onLayerClick }: RadarChartProps
         .attr("text-anchor", "middle")
         .attr("dominant-baseline", "middle")
         .style("font-size", "12px")
-        .style("font-weight", "500")
-        .style("fill", "#475569")
+        .style("font-weight", "600")
+        .style("fill", dimColor)
         .text(dim.name)
 
       // Level markers
@@ -102,9 +113,10 @@ export function RadarChart({ layers, dimensions, onLayerClick }: RadarChartProps
           .attr("cx", levelX)
           .attr("cy", levelY)
           .attr("r", 3)
-          .style("fill", "#94a3b8")
+          .style("fill", dimColor)
           .style("stroke", "white")
           .style("stroke-width", 1)
+          .style("opacity", 0.8)
       }
     })
 
@@ -158,25 +170,6 @@ export function RadarChart({ layers, dimensions, onLayerClick }: RadarChartProps
       })
     })
 
-    // Add legend
-    const legend = svg.append("g").attr("transform", `translate(10, 10)`)
-
-    layers.forEach((layer, i) => {
-      if (!layer.visible) return
-
-      const legendItem = legend.append("g").attr("transform", `translate(0, ${i * 20})`)
-
-      legendItem.append("circle").attr("cx", 6).attr("cy", 6).attr("r", 4).style("fill", layer.color)
-
-      legendItem
-        .append("text")
-        .attr("x", 16)
-        .attr("y", 6)
-        .attr("dominant-baseline", "middle")
-        .style("font-size", "12px")
-        .style("fill", "#374151")
-        .text(layer.label)
-    })
   }, [layers, dimensions, onLayerClick])
 
   return (
