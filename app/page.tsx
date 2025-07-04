@@ -845,6 +845,53 @@ export default function CareerLadderApp() {
           </div>
         )}
       </div>
+      
+      {/* Footer */}
+      <footer className="mt-12 border-t border-slate-100 bg-slate-50">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex flex-col items-center text-center">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-xs text-gray-400">
+              <div className="flex items-center gap-2">
+                <span>Original version by</span>
+                <a 
+                  href="https://github.com/csweichel" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="font-medium text-blue-600 hover:text-blue-800 transition-colors"
+                >
+                  Chris Weichel
+                </a>
+              </div>
+              <div className="hidden sm:block text-gray-400">•</div>
+              <div className="flex items-center gap-2">
+                <span>Source code on</span>
+                <a 
+                  href="https://github.com/adrukh/career-ladder" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="font-medium text-blue-600 hover:text-blue-800 transition-colors"
+                >
+                  GitHub
+                </a>
+              </div>
+              <div className="hidden sm:block text-gray-400">•</div>
+              <div className="flex items-center gap-2">
+                <span>Licensed under</span>
+                <span className="font-medium text-gray-800">MIT</span>
+                <span>to</span>
+                <a 
+                  href="https://bsky.app/profile/adrukh.bsky.social" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="font-medium text-blue-600 hover:text-blue-800 transition-colors"
+                >
+                  Anton Drukh
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }
