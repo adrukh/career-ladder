@@ -667,6 +667,15 @@ export default function CareerLadderApp() {
                           setSelectedRole(nearestRole)
                         }
                       }}
+                      onDimensionClick={activeTab === "define" ? (dimensionId, level) => {
+                        setCustomRole(prev => ({
+                          ...prev,
+                          levels: {
+                            ...prev.levels,
+                            [dimensionId]: level
+                          }
+                        }))
+                      } : undefined}
                     />
                     
                     

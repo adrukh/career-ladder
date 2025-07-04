@@ -22,9 +22,10 @@ interface RadarChartProps {
     color: string
   }>
   onLayerClick?: (layer: any) => void
+  onDimensionClick?: (dimensionId: string, level: number) => void
 }
 
-export function RadarChart({ layers, dimensions, onLayerClick }: RadarChartProps) {
+export function RadarChart({ layers, dimensions, onLayerClick, onDimensionClick }: RadarChartProps) {
   const svgRef = useRef<SVGSVGElement>(null)
 
   useEffect(() => {
@@ -117,6 +118,8 @@ export function RadarChart({ layers, dimensions, onLayerClick }: RadarChartProps
           .style("stroke", "white")
           .style("stroke-width", 1)
           .style("opacity", 0.8)
+          .style("cursor", onDimensionClick ? "pointer" : "default")
+          .on("click", onDimensionClick ? () => onDimensionClick(dim.id, level) : null)
       }
     })
 
