@@ -73,7 +73,7 @@ export function RadarChart({ layers, dimensions, onLayerClick, onDimensionClick 
         .style("stroke-width", 1)
     }
 
-    // Draw axis lines and labels
+    // Draw axis lines and labels (but not level markers yet)
     dimensions.forEach((dim, i) => {
       const angle = angleSlice * i - Math.PI / 2
       const x = Math.cos(angle) * radius
@@ -103,24 +103,6 @@ export function RadarChart({ layers, dimensions, onLayerClick, onDimensionClick 
         .style("font-weight", "600")
         .style("fill", dimColor)
         .text(dim.name)
-
-      // Level markers
-      for (let level = 1; level <= 4; level++) {
-        const levelRadius = rScale(level)
-        const levelX = Math.cos(angle) * levelRadius
-        const levelY = Math.sin(angle) * levelRadius
-
-        g.append("circle")
-          .attr("cx", levelX)
-          .attr("cy", levelY)
-          .attr("r", 3)
-          .style("fill", dimColor)
-          .style("stroke", "white")
-          .style("stroke-width", 1)
-          .style("opacity", 0.8)
-          .style("cursor", onDimensionClick ? "pointer" : "default")
-          .on("click", onDimensionClick ? () => onDimensionClick(dim.id, level) : null)
-      }
     })
 
     // Draw data layers
@@ -148,10 +130,10 @@ export function RadarChart({ layers, dimensions, onLayerClick, onDimensionClick 
         .style("fill-opacity", 0.2)
         .style("stroke", layer.color)
         .style("stroke-width", 2)
-        .style("cursor", "pointer")
+        .style("cursor", onLayerClick ? "pointer" : "default")
 
       // Add click handler
-      if (onLayerClick) {
+      if (onLayerClick && !onDimensionClick) {
         path.on("click", () => onLayerClick(layer))
       }
 
@@ -168,12 +150,36 @@ export function RadarChart({ layers, dimensions, onLayerClick, onDimensionClick 
           .style("fill", layer.color)
           .style("stroke", "white")
           .style("stroke-width", 2)
-          .style("cursor", "pointer")
-          .on("click", () => onLayerClick?.(layer))
+          .style("cursor", onLayerClick ? "pointer" : "default")
+          .on("click", onLayerClick ? () => onLayerClick(layer) : null)
       })
     })
 
-  }, [layers, dimensions, onLayerClick])
+    // Draw level markers on top of everything else
+    dimensions.forEach((dim, i) => {
+      const angle = angleSlice * i - Math.PI / 2
+      const dimColor = colorMap[dim.color] || "#cbd5e1"
+
+      // Level markers
+      for (let level = 1; level <= 4; level++) {
+        const levelRadius = rScale(level)
+        const levelX = Math.cos(angle) * levelRadius
+        const levelY = Math.sin(angle) * levelRadius
+
+        g.append("circle")
+          .attr("cx", levelX)
+          .attr("cy", levelY)
+          .attr("r", 3)
+          .style("fill", dimColor)
+          .style("stroke", "white")
+          .style("stroke-width", 1)
+          .style("opacity", 0.8)
+          .style("cursor", onDimensionClick ? "pointer" : "default")
+          .on("click", onDimensionClick ? () => onDimensionClick(dim.id, level) : null)
+      }
+    })
+
+  }, [layers, dimensions, onLayerClick, onDimensionClick])
 
   return (
     <div className="flex justify-center">
