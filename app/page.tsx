@@ -39,12 +39,12 @@ const DIMENSIONS = [
     icon: Users,
     color: "blue",
     levels: [
-      { label: "learns", description: "Learns quickly from others and consistently steps up when required" },
-      { label: "supports", description: "Supports other team members proactively and helps them to be successful" },
-      { label: "contributes", description: "Mentors others to accelerate their growth and encourages them to participate" },
+      { label: "develop", description: "Focuses on personal growth, learns from others, and consistently steps up when required" },
+      { label: "support", description: "Supports other team members proactively and helps them to be successful" },
+      { label: "manage", description: "Manages individual contributors, setting expectations and developing their careers" },
       {
-        label: "leads",
-        description: "Manages team members' career, expectations, performance and belonging through empowerment",
+        label: "lead",
+        description: "Leads managers and drives organizational outcomes through empowerment and strategy",
       },
     ],
   },
@@ -54,16 +54,16 @@ const DIMENSIONS = [
     icon: Target,
     color: "green",
     levels: [
-      { label: "task", description: "Works on individual tasks and brings them to a successful conclusion" },
-      { label: "feature", description: "Breaks down features/epics, plans, owns and ensures their delivery" },
+      { label: "implement", description: "Completes prescribed tasks with clear success criteria defined by others" },
+      { label: "design", description: "Creates solutions to achieve defined results, determining how to reach specified outcomes" },
       {
-        label: "function",
-        description: "Owns a functional aspect of the product; identifies, plans and ensures execution of work",
+        label: "solve",
+        description: "Optimizes problems within constraints, defining optimal results balancing time vs value",
       },
       {
-        label: "product",
+        label: "decide",
         description:
-          "Maintains and evangelises a coherent view of the/an entire product; owns business impacting outcomes",
+          "Identifies and prioritizes problems worth solving based on business context and strategic impact",
       },
     ],
   },
@@ -75,14 +75,14 @@ const DIMENSIONS = [
     levels: [
       {
         label: "individual",
-        description: "Acts as a manager of one, organises their own work aligned with the team's goals",
+        description: "Manages own work effectively, aligning personal contributions with team goals",
       },
       {
         label: "team",
-        description: "Directly impacts the team's success, owns and coordinates work with others in the team",
+        description: "Coordinates and impacts team success, collaborating effectively with team members",
       },
-      { label: "cross-team", description: "Acts, owns and effects outcomes across teams within product engineering" },
-      { label: "organization", description: "Has impact across the entire engineering org; owns and effects outcomes across functions" },
+      { label: "cross-team", description: "Drives outcomes across multiple teams, facilitating cross-team collaboration" },
+      { label: "organization", description: "Creates organizational impact, driving outcomes across functions and departments" },
     ],
   },
   {
@@ -92,20 +92,20 @@ const DIMENSIONS = [
     color: "orange",
     levels: [
       {
-        label: "follows",
-        description: "Follows the team processes, delivering a consistent flow of value to production",
+        label: "learn",
+        description: "Learns and consistently follows team processes, delivering reliable results",
       },
       {
-        label: "implements",
-        description: "Implements the team processes, making sure everybody understands the benefits/tradeoffs",
+        label: "teach",
+        description: "Helps others understand and succeed with processes, ensuring team-wide adoption",
       },
       {
-        label: "adjusts",
-        description: "Adjusts the team processes, listening to feedback and guiding the team through the changes",
+        label: "adjust",
+        description: "Adjusts team processes based on feedback, guiding the team through changes",
       },
       {
-        label: "defines",
-        description: "Defines the right processes for the org's maturity level, balancing agility and discipline",
+        label: "define",
+        description: "Defines processes for the organization's maturity level, balancing agility and discipline",
       },
     ],
   },
@@ -115,19 +115,19 @@ const DIMENSIONS = [
     icon: Code,
     color: "cyan",
     levels: [
-      { label: "adopts", description: "Adopts and actively learns the technology and tools defined by the team" },
+      { label: "adopt", description: "Adopts and actively learns the technology and tools defined by the team" },
       {
-        label: "specializes",
-        description: "Specializes in one or more technologies, is the go-to person, takes initiative to learn new ones",
+        label: "promote",
+        description: "Helps others succeed with technologies, sharing knowledge and best practices",
       },
       {
-        label: "evangelizes",
-        description: "Researches, creates proofs of concept and introduces new technologies to the team",
+        label: "decide",
+        description: "Evaluates and selects technologies for the team, creating proofs of concept and technical solutions",
       },
       {
-        label: "masters",
+        label: "lead",
         description:
-          "Has very deep knowledge about the whole technology stack of the system; designs and creates new technologies",
+          "Sets technology strategy and direction, guiding organizational technology decisions",
       },
     ],
   },
