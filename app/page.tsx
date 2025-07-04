@@ -228,14 +228,14 @@ const TRACK_COLORS = {
 }
 
 export default function CareerLadderApp() {
-  const [selectedRole, setSelectedRole] = useState(ROLES.find((r) => r.id === "software-engineer") || null)
+  const [selectedRole, setSelectedRole] = useState(ROLES[0] || null)
   const [customRole, setCustomRole] = useState({
     name: "Selected Skills",
     levels: { people: 1, work_scope: 1, org_scope: 1, process: 1, technology: 1 },
   })
   const [compareRoles, setCompareRoles] = useState([
-    ROLES.find((r) => r.id === "staff-engineer") || ROLES[0], 
-    ROLES.find((r) => r.id === "engineering-manager") || ROLES[1]
+    ROLES[1] || ROLES[0], 
+    ROLES[2] || ROLES[1] || ROLES[0]
   ])
   const [activeTab, setActiveTab] = useState("define")
   const [showNearestRole, setShowNearestRole] = useState(false)
@@ -335,14 +335,14 @@ export default function CareerLadderApp() {
   }
 
   const handleReset = () => {
-    setSelectedRole(ROLES.find((r) => r.id === "software-engineer") || null)
+    setSelectedRole(ROLES[0] || null)
     setCustomRole({
       name: "Selected Skills",
       levels: { people: 1, work_scope: 1, org_scope: 1, process: 1, technology: 1 },
     })
     setCompareRoles([
-      ROLES.find((r) => r.id === "staff-engineer") || ROLES[0], 
-      ROLES.find((r) => r.id === "engineering-manager") || ROLES[1]
+      ROLES[1] || ROLES[0], 
+      ROLES[2] || ROLES[1] || ROLES[0]
     ])
     setActiveTab("define")
     setShowNearestRole(false)
@@ -510,128 +510,145 @@ export default function CareerLadderApp() {
                       {/* Career Progression Tree */}
                       <div className="space-y-6">
                         <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
-                          {/* Base Role Card */}
-                          <div className="flex justify-center mb-8">
-                            <RoleCard
-                              role={ROLES.find((r) => r.id === "software-engineer") || ROLES[1]}
-                              isSelected={selectedRole?.id === "software-engineer"}
-                              onClick={() => {
-                                const role = ROLES.find((r) => r.id === "software-engineer")
-                                setSelectedRole(role || null)
-                              }}
-                              allRoles={ROLES}
-                              className="w-80"
-                              showModal={false}
-                            />
-                          </div>
-
-                          {/* Connecting Line */}
-                          <div className="hidden sm:flex justify-center mb-8">
-                            <div className="w-0.5 h-8 bg-gradient-to-b from-slate-400 to-slate-300"></div>
-                          </div>
-                          <div className="sm:hidden mb-6"></div>
-
-                          {/* Senior Engineer Card */}
-                          <div className="flex justify-center mb-8">
-                            <RoleCard
-                              role={ROLES.find((r) => r.id === "senior-engineer") || ROLES[2]}
-                              isSelected={selectedRole?.id === "senior-engineer"}
-                              onClick={() => {
-                                const role = ROLES.find((r) => r.id === "senior-engineer")
-                                setSelectedRole(role || null)
-                              }}
-                              allRoles={ROLES}
-                              className="w-80"
-                              showModal={false}
-                            />
-                          </div>
-
-                          {/* Connecting Line */}
-                          <div className="hidden sm:flex justify-center mb-8">
-                            <div className="w-0.5 h-8 bg-gradient-to-b from-slate-400 to-slate-300"></div>
-                          </div>
-                          <div className="sm:hidden mb-6"></div>
-
-                          {/* Career Tracks */}
-                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                            {/* Management Track */}
-                            <div className="space-y-4">
-                              <TrackHeader title="Management Track" trackType="management" />
-                              <div className="space-y-4">
-                                <RoleCard
-                                  role={ROLES.find((r) => r.id === "engineering-manager") || ROLES[5]}
-                                  isSelected={selectedRole?.id === "engineering-manager"}
-                                  onClick={() => {
-                                    const role = ROLES.find((r) => r.id === "engineering-manager")
-                                    setSelectedRole(role || null)
-                                  }}
-                                  allRoles={ROLES}
-                                  showModal={false}
-                                />
+                          {/* Dynamic Career Tree */}
+                          {(() => {
+                            // Find entry-level role (role with no predecessors)
+                            const entryRole = ROLES.find(role => 
+                              !ROLES.some(r => r.nextRoles?.includes(role.id))
+                            ) || ROLES[0]
+                            
+                            // Find roles that are part of the main progression (before branching)
+                            const getMainProgression = () => {
+                              const progression = []
+                              let currentRole = entryRole
+                              
+                              while (currentRole) {
+                                progression.push(currentRole)
+                                const nextRoles = currentRole.nextRoles?.map(id => 
+                                  ROLES.find(r => r.id === id)
+                                ).filter(Boolean) || []
                                 
-                                <div className="flex justify-center py-2">
-                                  <div className="w-0.5 h-6 bg-gradient-to-b from-slate-300 to-slate-200"></div>
-                                </div>
+                                // If there's exactly one next role, it's part of main progression
+                                // If there are multiple next roles, this is where branching starts
+                                if (nextRoles.length === 1) {
+                                  currentRole = nextRoles[0]
+                                } else {
+                                  break
+                                }
+                              }
+                              
+                              return progression
+                            }
+                            
+                            const mainProgression = getMainProgression()
+                            const branchingRole = mainProgression[mainProgression.length - 1]
+                            
+                            // Group branching roles by track
+                            const branchingRoles = branchingRole?.nextRoles?.map(id => 
+                              ROLES.find(r => r.id === id)
+                            ).filter(Boolean) || []
+                            
+                            const rolesByTrack = branchingRoles.reduce((acc, role) => {
+                              const track = role.track || 'Other'
+                              if (!acc[track]) acc[track] = []
+                              acc[track].push(role)
+                              return acc
+                            }, {})
+                            
+                            // Get subsequent roles for each track
+                            const getTrackProgression = (startRole) => {
+                              const progression = [startRole]
+                              let currentRole = startRole
+                              
+                              while (currentRole?.nextRoles?.length > 0) {
+                                const nextRole = currentRole.nextRoles
+                                  .map(id => ROLES.find(r => r.id === id))
+                                  .filter(Boolean)
+                                  .find(r => r.track === startRole.track)
                                 
-                                <RoleCard
-                                  role={ROLES.find((r) => r.id === "director-engineering") || {
-                                    id: "director-engineering",
-                                    name: "Director of Engineering",
-                                    track: "Management",
-                                    levels: { people: 4, work_scope: 3, org_scope: 3, process: 3, technology: 2 },
-                                    responsibilities: ["Org-wide leadership", "Vision setting", "Executive collaboration"],
-                                    skills: ["Executive leadership", "Vision & strategy", "Business acumen"]
-                                  }}
-                                  isSelected={selectedRole?.id === "director-engineering"}
-                                  onClick={() => {
-                                    const role = ROLES.find((r) => r.id === "director-engineering")
-                                    if (role) setSelectedRole(role)
-                                  }}
-                                  allRoles={ROLES}
-                                  showModal={false}
-                                />
+                                if (nextRole && !progression.includes(nextRole)) {
+                                  progression.push(nextRole)
+                                  currentRole = nextRole
+                                } else {
+                                  break
+                                }
+                              }
+                              
+                              return progression
+                            }
+                            
+                            return (
+                              <div className="space-y-8">
+                                {/* Main Progression */}
+                                {mainProgression.map((role, index) => (
+                                  <div key={role.id}>
+                                    <div className="flex justify-center">
+                                      <RoleCard
+                                        role={role}
+                                        isSelected={selectedRole?.id === role.id}
+                                        onClick={() => setSelectedRole(role)}
+                                        allRoles={ROLES}
+                                        className="w-80"
+                                        showModal={false}
+                                      />
+                                    </div>
+                                    {index < mainProgression.length - 1 && (
+                                      <>
+                                        <div className="hidden sm:flex justify-center my-8">
+                                          <div className="w-0.5 h-8 bg-gradient-to-b from-slate-400 to-slate-300"></div>
+                                        </div>
+                                        <div className="sm:hidden mb-6"></div>
+                                      </>
+                                    )}
+                                  </div>
+                                ))}
+                                
+                                {/* Connecting Line to Branches */}
+                                {Object.keys(rolesByTrack).length > 0 && (
+                                  <>
+                                    <div className="hidden sm:flex justify-center">
+                                      <div className="w-0.5 h-8 bg-gradient-to-b from-slate-400 to-slate-300"></div>
+                                    </div>
+                                    <div className="sm:hidden mb-6"></div>
+                                  </>
+                                )}
+                                
+                                {/* Career Tracks */}
+                                {Object.keys(rolesByTrack).length > 0 && (
+                                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                    {Object.entries(rolesByTrack).map(([track, roles]) => {
+                                      return (
+                                        <div key={track} className="space-y-4">
+                                          <TrackHeader 
+                                            title={track === 'Individual Contributor' ? 'Tech Leadership Track' : `${track} Track`}
+                                            trackType={track === 'Management' ? 'management' : 'technical'}
+                                          />
+                                          <div className="space-y-4">
+                                            {roles.map(role => getTrackProgression(role)).flat().map((role, index, allRoles) => (
+                                              <div key={role.id}>
+                                                <RoleCard
+                                                  role={role}
+                                                  isSelected={selectedRole?.id === role.id}
+                                                  onClick={() => setSelectedRole(role)}
+                                                  allRoles={ROLES}
+                                                  showModal={false}
+                                                />
+                                                {index < allRoles.length - 1 && (
+                                                  <div className="flex justify-center py-2">
+                                                    <div className="w-0.5 h-6 bg-gradient-to-b from-slate-300 to-slate-200"></div>
+                                                  </div>
+                                                )}
+                                              </div>
+                                            ))}
+                                          </div>
+                                        </div>
+                                      )
+                                    })}
+                                  </div>
+                                )}
                               </div>
-                            </div>
-
-                            {/* Tech Leadership Track */}
-                            <div className="space-y-4">
-                              <TrackHeader title="Tech Leadership Track" trackType="technical" />
-                              <div className="space-y-4">
-                                <RoleCard
-                                  role={ROLES.find((r) => r.id === "staff-engineer") || ROLES[3]}
-                                  isSelected={selectedRole?.id === "staff-engineer"}
-                                  onClick={() => {
-                                    const role = ROLES.find((r) => r.id === "staff-engineer")
-                                    setSelectedRole(role || null)
-                                  }}
-                                  allRoles={ROLES}
-                                  showModal={false}
-                                />
-                                
-                                <div className="flex justify-center py-2">
-                                  <div className="w-0.5 h-6 bg-gradient-to-b from-slate-200 to-slate-100"></div>
-                                </div>
-                                
-                                <RoleCard
-                                  role={ROLES.find((r) => r.id === "principal-engineer") || {
-                                    id: "principal-engineer",
-                                    name: "Principal Engineer",
-                                    track: "Individual Contributor",
-                                    levels: { people: 3, work_scope: 3, org_scope: 3, process: 3, technology: 4 },
-                                    responsibilities: ["Company-wide technical impact", "Technical vision", "Industry leadership"],
-                                    skills: ["Advanced technical leadership", "Industry expertise", "Technical strategy"]
-                                  }}
-                                  isSelected={selectedRole?.id === "principal-engineer"}
-                                  onClick={() => {
-                                    const role = ROLES.find((r) => r.id === "principal-engineer")
-                                    if (role) setSelectedRole(role)
-                                  }}
-                                  allRoles={ROLES}
-                                  showModal={false}
-                                />
-                              </div>
-                            </div>
-                          </div>
+                            )
+                          })()}
                         </div>
                       </div>
                     </div>

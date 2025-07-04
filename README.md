@@ -71,6 +71,8 @@ Defines the skill dimensions used to evaluate roles. Each dimension has:
 
 **To customize:** Modify the `DIMENSIONS` array to reflect your organization's values and competency model.
 
+**Important:** When adding or removing dimensions, ensure all existing roles in the `ROLES` array are updated with corresponding level values for the new dimensions.
+
 ### ROLES Object
 
 Defines the career progression paths and specific roles. Each role has:
@@ -111,6 +113,43 @@ Defines the career progression paths and specific roles. Each role has:
 2. Adjust skill level requirements for each role
 3. Modify career progression paths in `nextRoles`
 4. Add or remove roles as needed
+
+**Adding a New Role:**
+1. **Create the role object** with all required fields:
+   ```typescript
+   {
+     id: "unique-role-id",              // Must be unique across all roles
+     name: "Role Display Name",         // Shown in UI
+     track: "Individual Contributor",   // Or "Management" 
+     levels: {                          // Must include ALL dimensions
+       people: 2,                       // Level 1-4 for each dimension
+       work_scope: 3,
+       org_scope: 1,
+       process: 2,
+       technology: 4
+     },
+     responsibilities: [                // 3-4 key responsibilities
+       "Primary responsibility",
+       "Secondary responsibility"
+     ],
+     skills: [                          // Required skills
+       "Skill 1", "Skill 2"
+     ],
+     nextRoles: ["next-role-id"]        // Optional: career progression
+   }
+   ```
+2. **Add to ROLES array** - The role will automatically appear in dropdowns, charts, and career tree
+3. **Update career progression** - Add the role ID to `nextRoles` of preceding roles
+4. **Test thoroughly** - Verify the role displays correctly in all views
+
+**Removing a Role:**
+1. **Remove from ROLES array** - This will remove it from all UI components
+2. **Update `nextRoles`** - Remove references from other roles' progression paths
+3. **Check shared URLs** - Existing shared URLs may break if they reference the removed role
+
+**Creating Multiple Career Branches:**
+
+The career tree automatically creates branches based on the `track` field. Each unique `track` value becomes a separate branch in the career ladder. To create 3 branches instead of 2, simply use 3 different track names (e.g., "Individual Contributor", "Management", "Tech Leadership").
 
 ### Example Customization
 

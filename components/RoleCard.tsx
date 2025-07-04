@@ -19,17 +19,6 @@ import {
   Star,
 } from "lucide-react"
 
-const ROLE_ICONS = {
-  "junior-engineer": Code,
-  "software-engineer": Code,
-  "senior-engineer": Settings,
-  "staff-engineer": Star,
-  "principal-engineer": Crown,
-  "tech-lead": Target,
-  "engineering-manager": Users,
-  "senior-engineering-manager": Building,
-  "director-engineering": Crown,
-}
 
 const TRACK_COLORS = {
   "Individual Contributor": "blue",
