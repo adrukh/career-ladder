@@ -34,15 +34,15 @@ export function RadarChart({ layers, dimensions, onLayerClick, onDimensionClick 
     const svg = d3.select(svgRef.current)
     svg.selectAll("*").remove()
 
-    const width = 400
-    const height = 400
-    const margin = 60
+    const width = 500
+    const height = 500
+    const margin = 100
     const radius = Math.min(width, height) / 2 - margin
 
     const centerX = width / 2
     const centerY = height / 2
 
-    svg.attr("width", width).attr("height", height)
+    svg.attr("width", width).attr("height", height).style("overflow", "visible")
 
     const g = svg.append("g").attr("transform", `translate(${centerX}, ${centerY})`)
 
@@ -56,10 +56,11 @@ export function RadarChart({ layers, dimensions, onLayerClick, onDimensionClick 
     // Color mapping for dimensions
     const colorMap: Record<string, string> = {
       blue: "#3b82f6",
-      green: "#10b981", 
+      green: "#10b981",
       purple: "#8b5cf6",
       orange: "#f97316",
-      cyan: "#06b6d4"
+      cyan: "#06b6d4",
+      indigo: "#6366f1"
     }
 
     // Draw grid circles

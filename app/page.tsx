@@ -13,17 +13,17 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Separator } from "@/components/ui/separator"
 import {
   Users,
-  Code,
-  Settings,
   Share2,
   RotateCcw,
   Eye,
-  GitBranch,
   Target,
   Zap,
   CheckCircle,
   Info,
   ChevronRight,
+  Lightbulb,
+  Layers,
+  TrendingUp,
 } from "lucide-react"
 import { RadarChart } from "../components/RadarChart"
 import { RoleComparison } from "../components/RoleComparison"
@@ -34,101 +34,75 @@ import { TrackHeader } from "@/components/TrackHeader"
 // Career dimensions and their descriptions
 const DIMENSIONS = [
   {
-    id: "people",
-    name: "People",
-    icon: Users,
+    id: "product_sense",
+    name: "Product Sense",
+    icon: Lightbulb,
     color: "blue",
     levels: [
-      { label: "develop", description: "Focuses on personal growth, learns from others, and consistently steps up when required" },
-      { label: "support", description: "Supports other team members proactively and helps them to be successful" },
-      { label: "manage", description: "Manages individual contributors, setting expectations and developing their careers" },
-      {
-        label: "lead",
-        description: "Leads managers and drives organizational outcomes through empowerment and strategy",
-      },
+      { label: "follows", description: "Works from defined requirements without questioning scope" },
+      { label: "investigates", description: "Probes user problems and clarifies what success looks like" },
+      { label: "defines", description: "Frames problems and drives what the team should build" },
+      { label: "discovers", description: "Identifies unmet needs and shapes product direction from first principles" },
     ],
   },
   {
-    id: "work_scope",
-    name: "Work Scope",
-    icon: Target,
-    color: "green",
-    levels: [
-      { label: "implement", description: "Completes prescribed tasks with clear success criteria defined by others" },
-      { label: "design", description: "Creates solutions to achieve defined results, determining how to reach specified outcomes" },
-      {
-        label: "solve",
-        description: "Optimizes problems within constraints, defining optimal results balancing time vs value",
-      },
-      {
-        label: "decide",
-        description:
-          "Identifies and prioritizes problems worth solving based on business context and strategic impact",
-      },
-    ],
-  },
-  {
-    id: "org_scope",
-    name: "Organizational Scope",
-    icon: GitBranch,
+    id: "system_judgment",
+    name: "System Judgment",
+    icon: Layers,
     color: "purple",
     levels: [
-      {
-        label: "individual",
-        description: "Manages own work effectively, aligning personal contributions with team goals",
-      },
-      {
-        label: "team",
-        description: "Coordinates and impacts team success, collaborating effectively with team members",
-      },
-      { label: "cross-team", description: "Drives outcomes across multiple teams, facilitating cross-team collaboration" },
-      { label: "organization", description: "Creates organizational impact, driving outcomes across functions and departments" },
+      { label: "learns", description: "Understands existing architecture and works within established patterns" },
+      { label: "designs", description: "Makes sound technical decisions within defined system boundaries" },
+      { label: "evaluates", description: "Assesses long-term tradeoffs and production realities across the system" },
+      { label: "decides", description: "Sets architectural direction, identifying what risks are worth taking at org scale" },
     ],
   },
   {
-    id: "process",
-    name: "Process",
-    icon: Settings,
-    color: "orange",
-    levels: [
-      {
-        label: "learn",
-        description: "Learns and consistently follows team processes, delivering reliable results",
-      },
-      {
-        label: "teach",
-        description: "Helps others understand and succeed with processes, ensuring team-wide adoption",
-      },
-      {
-        label: "adjust",
-        description: "Adjusts team processes based on feedback, guiding the team through changes",
-      },
-      {
-        label: "define",
-        description: "Defines processes for the organization's maturity level, balancing agility and discipline",
-      },
-    ],
-  },
-  {
-    id: "technology",
-    name: "Technology",
-    icon: Code,
+    id: "ai_leverage",
+    name: "AI Leverage",
+    icon: Zap,
     color: "cyan",
     levels: [
-      { label: "adopt", description: "Adopts and actively learns the technology and tools defined by the team" },
-      {
-        label: "promote",
-        description: "Helps others succeed with technologies, sharing knowledge and best practices",
-      },
-      {
-        label: "decide",
-        description: "Evaluates and selects technologies for the team, creating proofs of concept and technical solutions",
-      },
-      {
-        label: "lead",
-        description:
-          "Sets technology strategy and direction, guiding organizational technology decisions",
-      },
+      { label: "uses", description: "Applies AI tools to accelerate individual tasks" },
+      { label: "structures", description: "Frames problems to maximize agent throughput and validates output" },
+      { label: "guides", description: "Defines how teams use AI effectively, catching drift and amplifying results" },
+      { label: "advances", description: "Evolves AI capabilities and workflows at the platform or org level" },
+    ],
+  },
+  {
+    id: "collaboration",
+    name: "Collaboration",
+    icon: Users,
+    color: "green",
+    levels: [
+      { label: "communicates", description: "Shares progress and asks questions clearly within the team" },
+      { label: "aligns", description: "Builds shared understanding across perspectives, surfaces tradeoffs early" },
+      { label: "bridges", description: "Connects teams, clarifies cross-functional dependencies, drives decisions" },
+      { label: "orients", description: "Establishes org-wide communication norms and aligns stakeholders at scale" },
+    ],
+  },
+  {
+    id: "outcomes",
+    name: "Outcomes",
+    icon: Target,
+    color: "orange",
+    levels: [
+      { label: "executes", description: "Delivers assigned work to the expected result within defined scope" },
+      { label: "owns", description: "Takes full responsibility for feature outcomes, removing blockers to ship" },
+      { label: "drives", description: "Drives results across teams, holding the standard for what good looks like" },
+      { label: "shapes", description: "Defines the outcomes the org should pursue and leads their execution" },
+    ],
+  },
+  {
+    id: "learning_velocity",
+    name: "Learning Velocity",
+    icon: TrendingUp,
+    color: "indigo",
+    levels: [
+      { label: "adapts", description: "Adopts new tools and workflows as directed, incorporates feedback" },
+      { label: "experiments", description: "Iterates on approaches actively, shares findings with the team" },
+      { label: "accelerates", description: "Evolves team practices ahead of the curve, discards what no longer works" },
+      { label: "sets pace", description: "Establishes a learning culture that keeps the org ahead of tool and process change" },
     ],
   },
 ]
@@ -136,88 +110,102 @@ const DIMENSIONS = [
 // Predefined roles
 const ROLES = [
   {
-    id: "software-engineer",
-    name: "Software Engineer",
+    id: "early-professional",
+    name: "Early Professional",
     track: "Individual Contributor",
-    levels: { people: 1, work_scope: 1, org_scope: 1, process: 1, technology: 1 },
+    levels: { product_sense: 1, system_judgment: 1, ai_leverage: 2, collaboration: 1, outcomes: 1, learning_velocity: 2 },
     responsibilities: [
       "Complete assigned tasks with defined success criteria",
-      "Learn and follow team processes consistently",
-      "Contribute to team goals and objectives",
-      "Seek feedback and guidance when needed",
+      "Adopt AI tools and workflows to accelerate personal output",
+      "Learn rapidly and incorporate feedback from the team",
+      "Communicate progress and blockers clearly",
     ],
-    skills: ["Programming fundamentals", "Code review participation", "Learning agility", "Team collaboration"],
-    nextRoles: ["senior-engineer"],
+    skills: ["AI tooling fluency", "Learning agility", "Task execution", "Receptiveness to feedback"],
+    nextRoles: ["product-engineer", "systems-engineer", "ai-engineer"],
   },
   {
-    id: "senior-engineer",
-    name: "Senior Software Engineer",
+    id: "product-engineer",
+    name: "Product Engineer",
     track: "Individual Contributor",
-    levels: { people: 2, work_scope: 2, org_scope: 2, process: 2, technology: 2 },
+    levels: { product_sense: 3, system_judgment: 1, ai_leverage: 2, collaboration: 2, outcomes: 2, learning_velocity: 2 },
     responsibilities: [
-      "Design solutions to achieve defined technical outcomes",
-      "Support and mentor team members proactively",
-      "Help others succeed with team processes and technologies",
-      "Coordinate effectively within the team for successful delivery",
+      "Investigate user problems and clarify outcomes before building",
+      "Drive end-to-end outcomes for features, not just delivery",
+      "Align with teammates and surface tradeoffs early",
+      "Use AI tools to increase delivery throughput",
     ],
-    skills: ["System design", "Technical mentoring", "Team collaboration", "Process guidance"],
-    nextRoles: ["staff-engineer", "engineering-manager"],
+    skills: ["Product thinking", "User empathy", "Outcome focus", "Cross-functional communication"],
+    nextRoles: ["senior-product-engineer"],
   },
   {
-    id: "staff-engineer",
-    name: "Staff Engineer",
+    id: "senior-product-engineer",
+    name: "Senior Product Engineer",
     track: "Individual Contributor",
-    levels: { people: 2, work_scope: 3, org_scope: 3, process: 3, technology: 3 },
+    levels: { product_sense: 4, system_judgment: 2, ai_leverage: 3, collaboration: 3, outcomes: 3, learning_velocity: 3 },
     responsibilities: [
-      "Solve complex problems across teams, balancing time vs value",
-      "Lead cross-team initiatives and facilitate collaboration",
-      "Support senior engineers and help them succeed",
-      "Evaluate and select technologies for teams",
+      "Define problems and drive what the team should build",
+      "Bridge product and engineering perspectives across teams",
+      "Structure work for AI leverage across the team",
+      "Drive end-to-end outcomes across the team, not just delivery",
     ],
-    skills: ["Technical leadership", "Cross-team collaboration", "Influence without authority", "Technology evaluation"],
-    nextRoles: ["principal-engineer", "engineering-manager"],
+    skills: ["Problem framing", "System design basics", "AI-augmented delivery", "Cross-team collaboration"],
+    nextRoles: [],
   },
   {
-    id: "engineering-manager",
-    name: "Engineering Manager",
-    track: "Management",
-    levels: { people: 3, work_scope: 3, org_scope: 3, process: 3, technology: 2 },
-    responsibilities: [
-      "Manage and develop team members",
-      "Set team goals and priorities",
-      "Coordinate with stakeholders",
-      "Drive team performance",
-    ],
-    skills: ["People management", "Performance management", "Team accountability", "Communication"],
-    nextRoles: ["staff-engineer", "director-engineering"],
-  },
-  {
-    id: "principal-engineer",
-    name: "Principal Engineer",
+    id: "systems-engineer",
+    name: "Systems Engineer",
     track: "Individual Contributor",
-    levels: { people: 2, work_scope: 4, org_scope: 4, process: 3, technology: 4 },
+    levels: { product_sense: 1, system_judgment: 3, ai_leverage: 2, collaboration: 2, outcomes: 2, learning_velocity: 2 },
     responsibilities: [
-      "Company-wide technical impact",
-      "Technical vision",
-      "Industry leadership",
-      "Architect complex systems"
+      "Design technically sound solutions within existing system boundaries",
+      "Evaluate tradeoffs for reliability, scalability, and maintainability",
+      "Keep the foundation sound as the team moves fast",
+      "Support teammates with architectural guidance",
     ],
-    skills: ["Advanced technical leadership", "Industry expertise", "Technical strategy", "System architecture"],
-    nextRoles: ["director-engineering"],
+    skills: ["System design", "Technical tradeoff analysis", "Infrastructure thinking", "Code quality"],
+    nextRoles: ["senior-systems-engineer"],
   },
   {
-    id: "director-engineering",
-    name: "Director of Engineering",
-    track: "Management",
-    levels: { people: 4, work_scope: 4, org_scope: 4, process: 4, technology: 2 },
+    id: "senior-systems-engineer",
+    name: "Senior Systems Engineer",
+    track: "Individual Contributor",
+    levels: { product_sense: 2, system_judgment: 4, ai_leverage: 3, collaboration: 2, outcomes: 3, learning_velocity: 3 },
     responsibilities: [
-      "Org-wide leadership",
-      "Vision setting",
-      "Executive collaboration",
-      "Strategic planning"
+      "Set architectural direction and manage risk at org scale",
+      "Evaluate and select technologies for team and product needs",
+      "Guide teams through complex technical decisions",
+      "Define how AI tools integrate safely into critical systems",
     ],
-    skills: ["Executive leadership", "Vision & strategy", "Business acumen", "Organizational design"],
-    nextRoles: ["principal-engineer"],
+    skills: ["Architecture leadership", "Technology evaluation", "Production risk assessment", "Technical mentoring"],
+    nextRoles: [],
+  },
+  {
+    id: "ai-engineer",
+    name: "AI Engineer",
+    track: "Individual Contributor",
+    levels: { product_sense: 1, system_judgment: 2, ai_leverage: 3, collaboration: 1, outcomes: 2, learning_velocity: 3 },
+    responsibilities: [
+      "Build and improve AI-powered features and workflows",
+      "Structure engineering problems for effective agent use",
+      "Evaluate model capabilities and platform tradeoffs",
+      "Experiment with new tools and share learnings with the team",
+    ],
+    skills: ["Model understanding", "Agent workflow design", "AI platform development", "Rapid experimentation"],
+    nextRoles: ["senior-ai-engineer"],
+  },
+  {
+    id: "senior-ai-engineer",
+    name: "Senior AI Engineer",
+    track: "Individual Contributor",
+    levels: { product_sense: 2, system_judgment: 3, ai_leverage: 4, collaboration: 2, outcomes: 3, learning_velocity: 4 },
+    responsibilities: [
+      "Advance AI capabilities and agent workflows at platform level",
+      "Define how teams use AI effectively at scale",
+      "Assess architectural risks specific to AI systems",
+      "Set the pace for AI-native engineering practices org-wide",
+    ],
+    skills: ["AI platform architecture", "Agent orchestration", "Model evaluation", "Engineering practice leadership"],
+    nextRoles: [],
   },
 ]
 
@@ -231,7 +219,7 @@ export default function CareerLadderApp() {
   const [selectedRole, setSelectedRole] = useState(ROLES[0] || null)
   const [customRole, setCustomRole] = useState({
     name: "Selected Skills",
-    levels: { people: 1, work_scope: 1, org_scope: 1, process: 1, technology: 1 },
+    levels: { product_sense: 1, system_judgment: 1, ai_leverage: 1, collaboration: 1, outcomes: 1, learning_velocity: 1 },
   })
   const [compareRoles, setCompareRoles] = useState([
     ROLES[1] || ROLES[0], 
@@ -338,7 +326,7 @@ export default function CareerLadderApp() {
     setSelectedRole(ROLES[0] || null)
     setCustomRole({
       name: "Selected Skills",
-      levels: { people: 1, work_scope: 1, org_scope: 1, process: 1, technology: 1 },
+      levels: { product_sense: 1, system_judgment: 1, ai_leverage: 1, collaboration: 1, outcomes: 1, learning_velocity: 1 },
     })
     setCompareRoles([
       ROLES[1] || ROLES[0], 
@@ -499,7 +487,7 @@ export default function CareerLadderApp() {
           /* Standard Two-Column Layout for Explore and Define */
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Sidebar Controls - Expanded */}
-            <div className={activeTab === "define" ? "lg:col-span-1" : "lg:col-span-2"}>
+            <div className="lg:col-span-1">
               <Card className="sticky top-6 bg-white border-slate-200 shadow-lg">
                 <CardHeader className="pb-4">
                   <CardTitle className="text-xl font-semibold text-gray-900">{activeTab === "define" ? "Skills" : "Roles"}</CardTitle>
@@ -542,44 +530,34 @@ export default function CareerLadderApp() {
                             
                             const mainProgression = getMainProgression()
                             const branchingRole = mainProgression[mainProgression.length - 1]
-                            
-                            // Group branching roles by track
-                            const branchingRoles = branchingRole?.nextRoles?.map(id => 
+
+                            const branchingRoles = branchingRole?.nextRoles?.map(id =>
                               ROLES.find(r => r.id === id)
                             ).filter(Boolean) || []
-                            
-                            const rolesByTrack = branchingRoles.reduce((acc, role) => {
-                              const track = role.track || 'Other'
-                              if (!acc[track]) acc[track] = []
-                              acc[track].push(role)
-                              return acc
-                            }, {})
-                            
-                            // Get subsequent roles for each track
+
+                            // Get the full progression for each branch independently
                             const getTrackProgression = (startRole) => {
                               const progression = [startRole]
                               let currentRole = startRole
-                              
                               while (currentRole?.nextRoles?.length > 0) {
                                 const nextRole = currentRole.nextRoles
                                   .map(id => ROLES.find(r => r.id === id))
-                                  .filter(Boolean)
-                                  .find(r => r.track === startRole.track)
-                                
-                                if (nextRole && !progression.includes(nextRole)) {
+                                  .filter(Boolean)[0]
+                                if (nextRole && !progression.find(r => r.id === nextRole.id)) {
                                   progression.push(nextRole)
                                   currentRole = nextRole
                                 } else {
                                   break
                                 }
                               }
-                              
                               return progression
                             }
-                            
+
+                            const branchProgressions = branchingRoles.map(getTrackProgression)
+
                             return (
-                              <div className="space-y-8">
-                                {/* Main Progression */}
+                              <div className="space-y-4">
+                                {/* Entry role(s) */}
                                 {mainProgression.map((role, index) => (
                                   <div key={role.id}>
                                     <div className="flex justify-center">
@@ -588,62 +566,53 @@ export default function CareerLadderApp() {
                                         isSelected={selectedRole?.id === role.id}
                                         onClick={() => setSelectedRole(role)}
                                         allRoles={ROLES}
-                                        className="w-80"
+                                        className="w-full"
                                         showModal={false}
                                       />
                                     </div>
                                     {index < mainProgression.length - 1 && (
-                                      <>
-                                        <div className="hidden sm:flex justify-center my-8">
-                                          <div className="w-0.5 h-8 bg-gradient-to-b from-slate-400 to-slate-300"></div>
-                                        </div>
-                                        <div className="sm:hidden mb-6"></div>
-                                      </>
+                                      <div className="flex justify-center my-2">
+                                        <div className="w-0.5 h-6 bg-slate-300"></div>
+                                      </div>
                                     )}
                                   </div>
                                 ))}
-                                
-                                {/* Connecting Line to Branches */}
-                                {Object.keys(rolesByTrack).length > 0 && (
-                                  <>
-                                    <div className="hidden sm:flex justify-center">
-                                      <div className="w-0.5 h-8 bg-gradient-to-b from-slate-400 to-slate-300"></div>
+
+                                {/* Branch connector + label */}
+                                {branchProgressions.length > 0 && (
+                                  <div className="flex flex-col items-center gap-1">
+                                    <div className="w-0.5 h-5 bg-slate-300"></div>
+                                    <div className="flex items-center gap-2 w-full">
+                                      <div className="flex-1 h-px bg-slate-200"></div>
+                                      <span className="text-xs text-slate-400 whitespace-nowrap">choose a path</span>
+                                      <div className="flex-1 h-px bg-slate-200"></div>
                                     </div>
-                                    <div className="sm:hidden mb-6"></div>
-                                  </>
+                                  </div>
                                 )}
-                                
-                                {/* Career Tracks */}
-                                {Object.keys(rolesByTrack).length > 0 && (
-                                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                                    {Object.entries(rolesByTrack).map(([track, roles]) => {
-                                      return (
-                                        <div key={track} className="space-y-4">
-                                          <TrackHeader 
-                                            title={track === 'Individual Contributor' ? 'Tech Leadership Track' : `${track} Track`}
-                                            trackType={track === 'Management' ? 'management' : 'technical'}
-                                          />
-                                          <div className="space-y-4">
-                                            {roles.map(role => getTrackProgression(role)).flat().map((role, index, allRoles) => (
-                                              <div key={role.id}>
-                                                <RoleCard
-                                                  role={role}
-                                                  isSelected={selectedRole?.id === role.id}
-                                                  onClick={() => setSelectedRole(role)}
-                                                  allRoles={ROLES}
-                                                  showModal={false}
-                                                />
-                                                {index < allRoles.length - 1 && (
-                                                  <div className="flex justify-center py-2">
-                                                    <div className="w-0.5 h-6 bg-gradient-to-b from-slate-300 to-slate-200"></div>
-                                                  </div>
-                                                )}
+
+                                {/* One box per branch — clearly separated */}
+                                {branchProgressions.length > 0 && (
+                                  <div className="space-y-4">
+                                    {branchProgressions.map((progression) => (
+                                      <div key={progression[0].id} className="border border-slate-200 rounded-lg p-3 space-y-2 bg-slate-50/50">
+                                        {progression.map((role, index) => (
+                                          <div key={role.id}>
+                                            <RoleCard
+                                              role={role}
+                                              isSelected={selectedRole?.id === role.id}
+                                              onClick={() => setSelectedRole(role)}
+                                              allRoles={ROLES}
+                                              showModal={false}
+                                            />
+                                            {index < progression.length - 1 && (
+                                              <div className="flex justify-center py-1">
+                                                <div className="w-0.5 h-4 bg-slate-300"></div>
                                               </div>
-                                            ))}
+                                            )}
                                           </div>
-                                        </div>
-                                      )
-                                    })}
+                                        ))}
+                                      </div>
+                                    ))}
                                   </div>
                                 )}
                               </div>
@@ -666,7 +635,7 @@ export default function CareerLadderApp() {
             </div>
 
             {/* Main Content - Radar Chart and Role Details */}
-            <div className={activeTab === "define" ? "lg:col-span-2" : "lg:col-span-1"}>
+            <div className="lg:col-span-2">
               <div className="space-y-6">
                 <Card className="bg-white border-slate-200 shadow-lg h-fit">
                   <CardHeader>

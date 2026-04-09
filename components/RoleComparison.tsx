@@ -26,7 +26,8 @@ export function RoleComparison({ roles, dimensions, trackColors, onRoleChange, a
     green: { text: "text-emerald-600", bg: "bg-emerald-50", border: "border-emerald-200", progress: "bg-emerald-500" },
     purple: { text: "text-violet-600", bg: "bg-violet-50", border: "border-violet-200", progress: "bg-violet-500" },
     orange: { text: "text-orange-600", bg: "bg-orange-50", border: "border-orange-200", progress: "bg-orange-500" },
-    cyan: { text: "text-cyan-600", bg: "bg-cyan-50", border: "border-cyan-200", progress: "bg-cyan-500" }
+    cyan: { text: "text-cyan-600", bg: "bg-cyan-50", border: "border-cyan-200", progress: "bg-cyan-500" },
+    indigo: { text: "text-indigo-600", bg: "bg-indigo-50", border: "border-indigo-200", progress: "bg-indigo-500" }
   }
 
   if (!role1 || !role2) {
@@ -71,135 +72,126 @@ export function RoleComparison({ roles, dimensions, trackColors, onRoleChange, a
 
   return (
     <div className="space-y-6">
-      {/* Main Comparison Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Skill Level Comparison - 2/3 width */}
-        <div className="lg:col-span-2">
-          <Card>
-            <CardHeader>
-              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-                <div>
-                  <CardTitle>Skill Level Comparison</CardTitle>
-                  <CardDescription>Compare the required skill levels across key dimensions</CardDescription>
-                </div>
-                {onRoleChange && allRoles.length > 0 && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:min-w-[400px]">
-                    <div className="space-y-2">
-                      <Label className="text-blue-600 font-medium">First Role</Label>
-                      <Select
-                        value={role1?.id || ""}
-                        onValueChange={(value) => onRoleChange(0, value)}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Choose first role..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {allRoles.map((role) => (
-                            <SelectItem key={role.id} value={role.id}>
-                              {role.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label className="text-red-600 font-medium">Second Role</Label>
-                      <Select
-                        value={role2?.id || ""}
-                        onValueChange={(value) => onRoleChange(1, value)}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Choose second role..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {allRoles.map((role) => (
-                            <SelectItem key={role.id} value={role.id}>
-                              {role.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-6">
-                {dimensions.map((dimension) => {
-                  const level1 = role1.levels[dimension.id]
-                  const level2 = role2.levels[dimension.id]
-                  const Icon = dimension.icon
-                  const colors = colorMap[dimension.color] || { text: "text-gray-600", bg: "bg-gray-50", border: "border-gray-200", progress: "bg-gray-500" }
-
-                  return (
-                    <div key={dimension.id} className="space-y-3">
-                      <div className="flex items-center gap-2">
-                        <Icon className={`h-5 w-5 ${colors.text}`} />
-                        <h4 className={`font-medium ${colors.text}`}>{dimension.name}</h4>
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <div className="flex justify-between text-sm">
-                            <span>{role1.name}</span>
-                            <span className="font-medium">Level {level1}</span>
-                          </div>
-                          <Progress 
-                            value={(level1 / 4) * 100} 
-                            className={`h-3 [&>div]:${colors.progress}`}
-                          />
-                          <p className="text-xs text-gray-600">{dimension.levels[level1 - 1]?.description}</p>
-                        </div>
-
-                        <div className="space-y-2">
-                          <div className="flex justify-between text-sm">
-                            <span>{role2.name}</span>
-                            <span className="font-medium">Level {level2}</span>
-                          </div>
-                          <Progress 
-                            value={(level2 / 4) * 100} 
-                            className={`h-3 [&>div]:${colors.progress}`}
-                          />
-                          <p className="text-xs text-gray-600">{dimension.levels[level2 - 1]?.description}</p>
-                        </div>
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Radar Chart - 1/3 width */}
-        <div className="lg:col-span-1">
-          <Card className="h-fit">
-            <CardHeader>
+      {/* Radar Chart - Full Width */}
+      <Card className="h-fit">
+        <CardHeader>
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div>
               <CardTitle className="text-lg">Role Comparison Radar</CardTitle>
               <CardDescription>Visual comparison of skill levels</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <RadarChart
-                layers={chartLayers}
-                dimensions={dimensions}
-              />
-              
-              {/* Role Labels */}
-              <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-gray-100">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-                  <span className="text-sm font-medium text-gray-700">{role1.name}</span>
+            </div>
+            {onRoleChange && allRoles.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:min-w-[400px]">
+                <div className="space-y-2">
+                  <Label className="text-blue-600 font-medium">First Role</Label>
+                  <Select
+                    value={role1?.id || ""}
+                    onValueChange={(value) => onRoleChange(0, value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choose first role..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {allRoles.map((role) => (
+                        <SelectItem key={role.id} value={role.id}>
+                          {role.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                  <span className="text-sm font-medium text-gray-700">{role2.name}</span>
+                <div className="space-y-2">
+                  <Label className="text-red-600 font-medium">Second Role</Label>
+                  <Select
+                    value={role2?.id || ""}
+                    onValueChange={(value) => onRoleChange(1, value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choose second role..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {allRoles.map((role) => (
+                        <SelectItem key={role.id} value={role.id}>
+                          {role.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        </div>
+            )}
+          </div>
+        </CardHeader>
+        <CardContent>
+          <RadarChart layers={chartLayers} dimensions={dimensions} />
+          <div className="flex gap-6 justify-center mt-4 pt-4 border-t border-gray-100">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+              <span className="text-sm font-medium text-gray-700">{role1.name}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-red-500"></div>
+              <span className="text-sm font-medium text-gray-700">{role2.name}</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Skill Level Comparison - Full Width */}
+      <div>
+        <Card>
+          <CardHeader>
+            <div>
+              <CardTitle>Skill Level Comparison</CardTitle>
+              <CardDescription>Compare the required skill levels across key dimensions</CardDescription>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-6">
+              {dimensions.map((dimension) => {
+                const level1 = role1.levels[dimension.id]
+                const level2 = role2.levels[dimension.id]
+                const Icon = dimension.icon
+                const colors = colorMap[dimension.color] || { text: "text-gray-600", bg: "bg-gray-50", border: "border-gray-200", progress: "bg-gray-500" }
+
+                return (
+                  <div key={dimension.id} className="space-y-3">
+                    <div className="flex items-center gap-2">
+                      <Icon className={`h-5 w-5 ${colors.text}`} />
+                      <h4 className={`font-medium ${colors.text}`}>{dimension.name}</h4>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span>{role1.name}</span>
+                          <span className="font-medium">Level {level1}</span>
+                        </div>
+                        <Progress
+                          value={(level1 / 4) * 100}
+                          className={`h-3 [&>div]:${colors.progress}`}
+                        />
+                        <p className="text-xs text-gray-600">{dimension.levels[level1 - 1]?.description}</p>
+                      </div>
+
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span>{role2.name}</span>
+                          <span className="font-medium">Level {level2}</span>
+                        </div>
+                        <Progress
+                          value={(level2 / 4) * 100}
+                          className={`h-3 [&>div]:${colors.progress}`}
+                        />
+                        <p className="text-xs text-gray-600">{dimension.levels[level2 - 1]?.description}</p>
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Detailed Comparison */}
